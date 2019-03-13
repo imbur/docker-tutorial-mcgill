@@ -110,3 +110,18 @@ Taking the steps from this answer on askubuntu
 You can use
 docker run hello-world
 to check if you can run docker without sudo.
+
+
+== MySQL
+
+An official image for MySQL link:https://hub.docker.com/_/mysql[is available here]. We can start using the database right away by following the steps included in section link:https://hub.docker.com/_/mysql#how-to-use-this-image["How to use this image"].
+
+== Basic images
+
+=== hello-world
+
+
+
+=== busybox
+
+docker run busybox ping www.google.com
