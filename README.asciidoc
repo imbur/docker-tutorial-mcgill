@@ -114,7 +114,13 @@ You can get images from DockerHub with `docker pull`. Once registered and execut
 
 === Exposing your containers to the Internet
 
+TODO
+
 === Virtual LAN
+
+
+
+You can create an isolated virtual local network for your containers with `docker network create` command. This link:https://blog.docker.com/2016/12/understanding-docker-networking-drivers-use-cases/[Docker blog posts] explains networks in details, but for us a thorough discussion is out of scope.
 
 
 
