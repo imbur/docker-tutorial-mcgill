@@ -1,20 +1,19 @@
 = Containers and Docker
-CS Tools, Tips and Tricks Workshop, 2019 Winter
+CS Tools, Tips and Tricks Workshop
+2019 Winter, McGill University
 
-#0. XaaS
+:sectnums:
 
-https://www.ibm.com/blogs/cloud-computing/2014/10/xaas-family-iaas-paas-saas-explained/
-
-#1. Virtualization types
+== Overview of Virtualization
 
 Using a virtualization method and building an image provides consistent environments. The virtualization method can be categorized based on how it mimics hardware to a guest operating system and emulates guest operating environment. Primarily, there are two main types of virtualization:
 
-1. **Emulation and paravirtualization** is based on some type of hypervisor which is responsible for translating guest OS kernel code to software instructions or directly executes it on the bare-metal hardware. A virtual machine provides a computing environment with dedicated resources, requests for CPU, memory, hard disk, network and other hardware resources that are managed by a virtualization layer. A virtual machine has its own OS and full software stack.
-2. **Container-based virtualization**, also known as operating system-level virtualization, enables multiple isolated executions within a single operating system kernel. It has the best possible performance and density, while featuring dynamic resource management. The isolated virtual execution environment provided by this type of virtualization is called a _container_ and can be viewed as a well-defined group of processes.
+* **Emulation and paravirtualization** is based on some type of hypervisor which is responsible for translating guest OS kernel code to software instructions or directly executes it on the bare-metal hardware. A virtual machine provides a computing environment with dedicated resources, requests for CPU, memory, hard disk, network and other hardware resources that are managed by a virtualization layer. A virtual machine has its own OS and full software stack.
+* **Container-based virtualization**, also known as operating system-level virtualization, enables multiple isolated executions within a single operating system kernel. It has the best possible performance and density, while featuring dynamic resource management. The isolated virtual execution environment provided by this type of virtualization is called a _container_ and can be viewed as a well-defined group of processes.
 
-![Platform- and OS- level virtualization differences](virtualization-platform-os.png)
+image::virtualization-platform-os.png[Platform- and OS- level virtualization differences,width=500]
 
-#2. Docker concepts
+== Docker foundations
 
 The core concepts of Docker are *images* and *containers*.
 
@@ -23,7 +22,45 @@ A *Docker image* is a read-only template with instructions for creating a Docker
 A *Docker container* is a runnable instance of a Docker image. You can run, start, stop, move, or delete a container using Docker API or CLI commands. When you run a container, you can provide configuration metadata such as networking information or environment variables.
 
 
-#3. Docker basics + hands-on
+_Exercise._ We are going to create a simple virtual network on which a web server runs a _Java Spring application_. The functionality provided by the web server via a RESTful API is to (i) add people and (ii) add events to the system, as well as to (iii) register selected people to selected events. This example application is adapted from the link:https://mcgill-ecse321-winter2019.github.io/EventRegistration-Tutorials/#_backend_with_spring_and_java_jpa[ECSE321 course tutorial]. We are also exposing this functionality to the internet. Furthermore, we run a Postgres Database that is also connected to this same network. This database is used by the java application running on the web server to store the registration info. An architecture diagram of the system is shown below.
+
+
+image::example-architecture.png[width=600]
+
+[NOTE]
+For any Docker command, you can use the `--help` command line switch to learn about that particular command and its possible parameters. For example, try `docker run --help`
+
+=== Docker containers
+
+==== Running a container
+
+To create and run a container, one needs to specify an image on which the container is based on. Luckily, docker has the support for downloading images automatically from an online _repository_ in which it identifies images by their names and versions. 
+
+Things to try:
+
+* `docker run hello-world`
+* `docker run --rm busybox ping www.google.com`
+* `docker run -it busybox`
+
+_Example._ Setting up the database can be done by  
+
+We can create a containerized version of PostgreSQL by issuing `docker run --name database-postgresql -e POSTGRES_PASSWORD=pass -e POSTGRES_USER=user -e POSTGRES_DB=eventregistrations -d postgres` command.
+
+==== Container management
+
+Docker offers commands (among many) to list, stop, start, and remove containers. Furthermore, the `docker inspect` command can tell several details about the configuration of the given container.
+
+Things to try:
+
+* `docker ps`
+* `docker ps --all`
+* `docker container prune`
+* `docker inspect <CONTAINER_ID>`
+
+=== Docker images
+
+
+
 
 * **Dockerfile**: An image is defined in a `Dockerfile`. Every image starts from a base image, e.g. from `ubuntu`, a base Ubuntu image. The Docker image is built from the base image using a simple, descriptive set of steps we call instructions, which are stored in a `Dockerfile`. Main dockerfile *instructions*:
   - `FROM`
