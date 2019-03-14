@@ -2,8 +2,18 @@ Docker hands-on:
  * networking should be shown as well
  * example could be to run a tomcat and a mysql DB in two separate containers and just deploy our app to tomcat, such as in a testing environment
  * Show slides (10 min)
- * Demo (30 min)
+ * Demo (35 min)
  ** Dockerfile (15 min)
  ** Docker CLI (20 min)
  * Step-by-step hands-on exercise (connecting two microservices - DB, tomcat, 25 min)
 
+
+Virtualization
+
+Containers
+
+Dockerfile, docker image
+Docker container
+Dockerhub
+
+Docker networking
