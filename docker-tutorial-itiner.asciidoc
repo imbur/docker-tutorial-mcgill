@@ -1,6 +1,6 @@
-= Containers and Docker
-CS Tools, Tips and Tricks Workshop
-2019 Winter, McGill University
+= Container Virtualization with Docker
+CS Tools, Tips and Tricks Workshop at McGill University
+2019 Winter
 
 :sectnums:
 
@@ -42,9 +42,12 @@ Things to try:
 * `docker run --rm busybox ping www.google.com`
 * `docker run -it busybox`
 
-_Example._ Setting up the database can be done by  
+_Exercise._ Setting up the database can be done by issuing `docker run --name database-postgresql -e POSTGRES_PASSWORD=pass -e POSTGRES_USER=user -e POSTGRES_DB=eventregistration -d postgres` command.
 
-We can create a containerized version of PostgreSQL by issuing `docker run --name database-postgresql -e POSTGRES_PASSWORD=pass -e POSTGRES_USER=user -e POSTGRES_DB=eventregistrations -d postgres` command.
+[NOTE]
+At the end of this tutorial we will take a look at link:https://hub.docker.com/[DockerHub] where images like _postgres_ are hosted and their settings are documented.
+
+Once a container is started, `docker exec` can be used to execute a command within that container. For example, list 
 
 ==== Container management
 
@@ -53,44 +56,42 @@ Docker offers commands (among many) to list, stop, start, and remove containers.
 Things to try:
 
 * `docker ps`
-* `docker ps --all`
-* `docker container prune`
-* `docker inspect <CONTAINER_ID>`
-
-=== Docker images
-
-
-
-
-* **Dockerfile**: An image is defined in a `Dockerfile`. Every image starts from a base image, e.g. from `ubuntu`, a base Ubuntu image. The Docker image is built from the base image using a simple, descriptive set of steps we call instructions, which are stored in a `Dockerfile`. Main dockerfile *instructions*:
-  - `FROM`
-  - `RUN`
-  - `ADD`
-  - `VOLUME`
-  - `CMD`
-  - `WORKDIR`
-
-[More details here](https://docs.docker.com/engine/reference/builder/); example for tomcat is here: https://blog.lukaspradel.com/dockerizing-a-tomcat-postgresql-java-web-application/
-
-* **Command** `docker build .`: it builds an *image* from a *Dockerfile* and a *context*. The build’s *context* is the set of files at a specified location PATH or URL (in this case the current directory, `.`). The PATH is a directory on your local filesystem. The URL is a Git repository location. Add the `-f` switch to specify the Dockerfile location, if it is not present in the root context.
-
-* **Command** `docker run`: Run a command in a new container. Images come to life with the `docker run` command, which creates a container by adding a read-write layer on top of the image. This combination of read-only layers topped with a read-write layer is known as a [union file system](https://en.wikipedia.org/wiki/UnionFS). Changes exist only within an individual container instance. When a container is deleted, any changes are lost unless steps are taken to preserve them. Parameters to show: `-v`, `-i`, `-t`, `-a`
-
-* **Command** `docker start/stop`: Start/stop a container.
-
-* **Command** `docker exec`: Execute a command in a running container.
-
-* Managing images and containers:
-
-`docker ps --all`:
+* `docker ps --all` -- example output:
 ```
 CONTAINER ID  IMAGE                 COMMAND                 STATUS               
 9bba8a2a3f81  makisyu/texlive-2016  "/bin/bash -c 'sleep…"  Exited (0) 4 days ago
 cd005b9af0af  makisyu/texlive-2016  "/bin/bash -c 'sleep…"  Exited (0) 4 days ago
 b92dd4d5886d  eclipse/che           "/scripts/entrypoint…"  Exited (2) 5 days ago
 ```
+* `docker rm <CONTAINER_ID>`
+* `docker container prune`
+* `docker inspect <CONTAINER_ID>`
 
-`docker images ls --all`:
+[IMPORTANT]
+Once a container is removed (deleted), data stored within the container is lost unless additional steps are taken.
+
+=== Docker images
+
+==== Creating a new image
+
+An image is defined in a **Dockerfile**. Every image starts from a base image, e.g. from `ubuntu`, a base Ubuntu image. The Docker image is built from the base image using a simple, descriptive set of steps we call instructions, which are stored in a `Dockerfile`. Main dockerfile *instructions*:
+  * `FROM`: specifies an already existing image that is used as a starting point when creating a new image
+  * `RUN`: executes a command during build
+  * `COPY`: copies a file to the image
+  * `VOLUME`: mounts a volume to the image
+  * `CMD`: default command that is executed once a container is started from the image -- a Dockerfile can have only one of this!
+  * `WORKDIR`: specifies the default working directory
+
+[NOTE]
+There are commands with the same functionality for a running container. For example, the `COPY` instruction for an image is complemented with `docker cp`. For an already running container, `docker cp` can copy a file to the container's filesystem (or the other way around).
+
+The `docker build .` command builds an *image* from a *Dockerfile and a context*. The build’s *context* is the set of files at a specified location PATH or URL (in this case the current directory, `.`). The PATH is a directory on your local filesystem. The URL is a Git repository location. Add the `-f` switch to specify the Dockerfile location, if it is not present in the root context.
+
+_Exercise._ Use the `java` image to create a new image for the Spring Web application. You need to add both the _example-webapp.jar_ and the _application.properties_ to the image. The web server should be started by `java -jar example-webapp.jar` when the container starts.
+
+==== Managing images
+
+Docker provides similar commands to the ones available for containers, one just needs to add the `image` keyword to the command. For example, `docker images ls --all` yields
 ```
 REPOSITORY            IMAGE ID      CREATED       SIZE
 eclipse/che           8956a46aa7e3  10 days ago   51.3MB
@@ -98,6 +99,22 @@ gradle                e7f185032db8  2 months ago  820MB
 busybox               6ad733544a63  3 months ago  1.13MB
 makisyu/texlive-2016  bb92f3e57f6b  9 months ago  5.42GB
 ```
+
+For more details, see the link:https://docs.docker.com/engine/reference/builder/[Dockerfile reference].
+
+
+
+
+* **Command** `docker start/stop`: Start/stop a container.
+
+
+
+
+
+* Managing images and containers:
+
+
+
 
 #4. DockerHub + demo
 
@@ -131,40 +148,37 @@ docker run -it -v `pwd`/:/mnt/ openjdk
 
 
 
+== Saving your work
 
-= Miscellaneous
+There are multiple approaches to save your work when dealing with Docker. This section overviews three common methods and illustrates them with small exercises using the _busybox_ image.
 
+=== Creating a new image from a container
 
-== Running docker without sudo 
+Once you have already started a container, you can save its state to a new image (with a different name than what was used to start up the original container) by issuing `docker commit`. This allows you to start up a new container from the committed state any number of times and continue your work from a saved state.
 
-Taking the steps from this answer on askubuntu 
+_Exercise._ Start a new instance of busybox with `docker run -it --name savetest busybox`. Create a file _greetings.txt_ and add the `"Hello world!"` content to it. Use the `docker commit savetest busybox-greeting` command to save a new image named _busybox-greeting_. Create and run a new container from _busybox-greeting_ and see if the created file is really there.
+
+=== Saving and loading an image
+
+Once you have created an image, one of the simplest way of moving it across hosts is to use `docker save` and `docker load`. It is important to remember that only images can be loaded/saved, so that one needs to commit first if there is data inside the container that needs to be saved. Docker can save/load `.tar` files.
+
+_Exercise._ Save the _busybox-greeting_ image to _busybox-greeting.tar_. Then, try re-loading the image.
+
+=== Saving data by mounting a volume from the host
+
+In cases when you would like to provide input to/save input from a program that is running inside a container, the `docker cp` command may be inconvenient to use for handling several multiple input/output files. An alternative solution is to mount a folder from the hosts' filesystem as a volume in the container and use that folder to share files between the host and the container.
+
+_Exercise._ Mount a volume to a container created from the _busybox_ image and try updating the folder content from both the host and the container. Investigate how to use the `-v` switch of `docker run`!
+
+== Miscellaneous
+
+=== Running docker without sudo 
+
+Follow the steps in link:https://askubuntu.com/a/477554[this answer on askubuntu], namely:
 
 . Add the docker group if it doesn't already exist:
 `sudo groupadd docker`
-. Add the connected user "$USER" to the docker group. Change the user name to match your preferred user if you do not want to use your current user:
+. Add the connected user `$USER` to the docker group. Change the user name to match your preferred user if you do not want to use your current user:
 `sudo gpasswd -a $USER docker`
 . Either do a `newgrp docker` or log out/in to activate the changes to groups.
-You can use
-docker run hello-world
-to check if you can run docker without sudo.
-
-
-== Official Images
-
-=== hello-world
-
-
-
-=== busybox
-
-docker run busybox ping www.google.com
-
-== MySQL
-
-An official image for MySQL link:https://hub.docker.com/_/mysql[is available here]. We can start using the database right away by following the steps included in section link:https://hub.docker.com/_/mysql#how-to-use-this-image["How to use this image"].
-
-== Web server: Tomcat
-
-
-Docker inspect command
-
+You can use `docker run hello-world` to check if you can run docker without sudo.
