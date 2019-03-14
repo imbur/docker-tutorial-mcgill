@@ -1,8 +1,11 @@
+:toclevels: 3
+:toc:
+:toc2:
+:numbered:
+
 = Container Virtualization with Docker
 CS Tools, Tips and Tricks Workshop at McGill University
 2019 Winter
-
-:sectnums:
 
 == Overview of Virtualization
 
