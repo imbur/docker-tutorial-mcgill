@@ -2,10 +2,12 @@
 :toc:
 :toc2:
 :numbered:
+:email: marton.bur@mail.mcgill.ca
 
-= Container Virtualization with Docker
-CS Tools, Tips and Tricks Workshop at McGill University
+= Container Virtualization with Docker: CS Tools, Tips and Tricks Seminar @ McGill University
+Marton Bur
 2019 Winter
+
 
 link:https://github.com/imbur/docker-tutorial-mcgill/blob/master/docker-tutorial-mcgill.pdf[PDF version]
 
@@ -16,7 +18,7 @@ Using a virtualization method and building an image provides consistent environm
 * **Emulation and paravirtualization** is based on some type of hypervisor which is responsible for translating guest OS kernel code to software instructions or directly executes it on the bare-metal hardware. A virtual machine provides a computing environment with dedicated resources, requests for CPU, memory, hard disk, network and other hardware resources that are managed by a virtualization layer. A virtual machine has its own OS and full software stack.
 * **Container-based virtualization**, also known as operating system-level virtualization, enables multiple isolated executions within a single operating system kernel. It has the best possible performance and density, while featuring dynamic resource management. The isolated virtual execution environment provided by this type of virtualization is called a _container_ and can be viewed as a well-defined group of processes.
 
-image::virtualization-platform-os.png[Platform- and OS- level virtualization differences,width=500]
+image::virtualization-platform-os.png[Platform- and OS- level virtualization differences,width=500,align="center"]
 
 == Docker foundations
 
@@ -30,7 +32,8 @@ A *Docker container* is a runnable instance of a Docker image. You can run, star
 _Exercise._ We are going to create a simple virtual network on which a web server runs a _Java Spring application_. The functionality provided by the web server via a RESTful API is to (i) add people and (ii) add events to the system, as well as to (iii) register selected people to selected events. This example application is adapted from the link:https://mcgill-ecse321-winter2019.github.io/EventRegistration-Tutorials/#_backend_with_spring_and_java_jpa[ECSE321 course tutorial]. We are also exposing this functionality to the Internet. Furthermore, we run a Postgres Database that is also connected to this same network. This database is used by the java application running on the web server to store the registration info. An architecture diagram of the system is shown below.
 ****
 
-image::example-architecture.png[width=600]
+[.image-center]
+image::example-architecture.png[Example application architecture, width=600, align="center"]
 
 [NOTE]
 For any Docker command, you can use the `--help` command line switch to learn about that particular command and its possible parameters. For example, try `docker run --help`
