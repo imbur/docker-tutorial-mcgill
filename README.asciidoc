@@ -7,6 +7,8 @@
 CS Tools, Tips and Tricks Workshop at McGill University
 2019 Winter
 
+link:https://github.com/imbur/docker-tutorial-mcgill/blob/master/docker-tutorial-mcgill.pdf[PDF version]
+
 == Overview of Virtualization
 
 Using a virtualization method and building an image provides consistent environments. The virtualization method can be categorized based on how it mimics hardware to a guest operating system and emulates guest operating environment. Primarily, there are two main types of virtualization:
@@ -45,12 +47,12 @@ Things to try:
 * `docker run --rm busybox ping www.google.com`
 * `docker run -it busybox`
 
-_Exercise._ Setting up the database can be done by issuing `docker run --name database-postgresql -e POSTGRES_PASSWORD=pass -e POSTGRES_USER=user -e POSTGRES_DB=eventregistration -d postgres` command.
+_Exercise._ Setting up the database can be done by issuing `docker run --name postgresql-server -e POSTGRES_PASSWORD=pass -e POSTGRES_USER=user -e POSTGRES_DB=eventregistration -d postgres` command.
 
 [NOTE]
-At the end of this tutorial we will take a look at link:https://hub.docker.com/[DockerHub] where images like _postgres_ are hosted and their settings are documented.
+Later in this tutorial, we will take a quick look at link:https://hub.docker.com/[DockerHub] where images like _postgres_ are hosted and their settings are documented.
 
-Once a container is started, `docker exec` can be used to execute a command within that container. For example, list 
+Once a container is started _and it is running_, `docker exec` can be used to execute a command within that container. For example, list what files are in the current working folder of the DB server with `docker exec postgresql-server ls`.
 
 ==== Container management
 
@@ -90,7 +92,7 @@ There are commands with the same functionality for a running container. For exam
 
 The `docker build .` command builds an *image* from a *Dockerfile and a context*. The build’s *context* is the set of files at a specified location PATH or URL (in this case the current directory, `.`). The PATH is a directory on your local filesystem. The URL is a Git repository location. Add the `-f` switch to specify the Dockerfile location, if it is not present in the root context.
 
-_Exercise._ Use the `java` image to create a new image for the Spring Web application. You need to copy both the _example-webapp.jar_ and the _application.properties_ to the image. The web server should be started by `java -jar example-webapp.jar` when the container starts.
+_Exercise._ Use the `java` image to create a new image for the Spring Web application using `docker build` (name this new image _example-spring-app_). You need to copy both the _example-webapp.jar_ and the _application.properties_ to the image. The web server should be started by `java -jar example-webapp.jar` when the container starts.
 
 ==== Managing images
 
@@ -107,21 +109,25 @@ For more details, see the link:https://docs.docker.com/engine/reference/builder/
 
 ==== DockerHub
 
-You can get images from DockerHub with `docker pull`. Once registered and executed `docker login`, the `docker push` can publish your images.
-
+DockerHub is a place where images can be uploaded and shared. You can download images from DockerHub with `docker pull`. Once registered and executed `docker login`, the `docker push` can be used to link:https://blog.codeship.com/using-docker-push-to-publish-images-to-dockerhub/[publish your images].
 
 == Docker networking
 
-=== Exposing your containers to the Internet
-
-TODO
-
 === Virtual LAN
-
-
 
 You can create an isolated virtual local network for your containers with `docker network create` command. This link:https://blog.docker.com/2016/12/understanding-docker-networking-drivers-use-cases/[Docker blog posts] explains networks in details, but for us a thorough discussion is out of scope.
 
+_Exercise._ Use the `docker inspect` command to verify that the web server and the database server containers are on the same network.
+
+=== Expose containerized services to the Internet
+
+In addition to managing virtual networks for containers, docker can automatically manages firewall rules for setting up port forwarding your containers' services and the physical network interface of the host. Two steps need to be done to achieve this:
+
+. *A port should be exposed.* A port may be exposed by default for a container if the image was built using the `EXPOSE <PORT_NUMBER>` instruction. For individual containers, the `--expose` switch can be used with `docker run`.
+
+. *A post should be published.* When starting a new container, the `docker run` command must be specified which ports to expose with the `-p` switch so that it can automatically configure the corresponding firewall rules of the host. This will also ensure that the rules are removed once the container is removed.
+
+_Exercise._ Start/remove and start the web server with exposing and publishing port 8080 on the host's port of your choice. Observe what extra rules were added to the host's firewall with `sudo iptables -t nat -L -n`.
 
 
 == Saving your work
@@ -157,4 +163,5 @@ Follow the steps in link:https://askubuntu.com/a/477554[this answer on askubuntu
 . Add the connected user `$USER` to the docker group. Change the user name to match your preferred user if you do not want to use your current user:
 `sudo gpasswd -a $USER docker`
 . Either do a `newgrp docker` or log out/in to activate the changes to groups.
+
 You can use `docker run hello-world` to check if you can run docker without sudo.
