@@ -85,6 +85,7 @@ Once a container is removed (deleted), data stored within the container is lost 
 ==== Creating a new image
 
 An image is defined in a **Dockerfile**. Every image starts from a base image, e.g. from `ubuntu`, a base Ubuntu image. The Docker image is built from the base image using a simple, descriptive set of steps we call instructions, which are stored in a `Dockerfile`. Main dockerfile *instructions*:
+
   * `FROM`: specifies an already existing image that is used as a starting point when creating a new image
   * `RUN`: executes a command during build
   * `COPY`: copies a file to the image
