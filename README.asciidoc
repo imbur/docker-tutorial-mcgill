@@ -135,7 +135,7 @@ In addition to managing virtual networks for containers, docker can automaticall
 
 . *A port should be exposed.* A port may be exposed by default for a container if the image was built using the `EXPOSE <PORT_NUMBER>` instruction. For individual containers, the `--expose` switch can be used with `docker run`.
 
-. *A post should be published.* When starting a new container, the `docker run` command must be specified which ports to expose with the `-p` switch so that it can automatically configure the corresponding firewall rules of the host. This will also ensure that the rules are removed once the container is removed.
+. *A port should be published.* When starting a new container, the `docker run` command must be specified which ports to expose with the `-p` switch so that it can automatically configure the corresponding firewall rules of the host. This will also ensure that the rules are removed once the container is removed.
 
 ****
 _Exercise._ Start/remove and start the web server with exposing and publishing port 8080 on the host's port of your choice. Observe what extra rules were added to the host's firewall with `sudo iptables -t nat -L -n`.
